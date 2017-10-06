@@ -9,13 +9,19 @@
 import UIKit
 
 class PacotesViagensViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UISearchBarDelegate {
+    
+    //MARK: - Outlets
 
     @IBOutlet weak var colecaoPacotesViagem: UICollectionView!
     @IBOutlet weak var pesquisarViagens: UISearchBar!
     @IBOutlet weak var labelContadorPacotes: UILabel!
     
+    //MARK: - Atributos
+    
     let listaComTodasViagens:Array<PacoteViagem> = PacoteViagemDAO().retornaTodasAsViagens()
     var listaViagens:Array<PacoteViagem> = []
+    
+    //MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +37,8 @@ class PacotesViagensViewController: UIViewController, UICollectionViewDataSource
         // Dispose of any resources that can be recreated.
     }
     
+    //MARK: - CollectionView
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.listaViagens.count
     }
@@ -44,8 +52,7 @@ class PacotesViagensViewController: UIViewController, UICollectionViewDataSource
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let larguraCelula = collectionView.bounds.width / 2
-        return CGSize(width: larguraCelula-15, height: 160)
+        return UIDevice.current.userInterfaceIdiom == .phone ? CGSize(width: collectionView.bounds.width/2-20, height: 160) : CGSize(width: collectionView.bounds.width/3-20, height: 250)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -55,6 +62,8 @@ class PacotesViagensViewController: UIViewController, UICollectionViewDataSource
         controller.pacoteSelecionado = pacote
         self.navigationController?.pushViewController(controller, animated: true)
     }
+    
+    //MARK: - Métodos
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         listaViagens = listaComTodasViagens

@@ -9,6 +9,8 @@
 import UIKit
 
 class DetalhesViagensViewController: UIViewController {
+    
+    //MARK: - Outlets
 
     @IBOutlet weak var imagemPacoteViagem: UIImageView!
     @IBOutlet weak var labelTituloPacoteViagem: UILabel!
@@ -18,7 +20,11 @@ class DetalhesViagensViewController: UIViewController {
     @IBOutlet weak var scrollPrincipal: UIScrollView!
     @IBOutlet weak var textFieldData: UITextField!
     
+    //MARK: - Atributos
+    
     var pacoteSelecionado:PacoteViagem? = nil
+    
+    //MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +42,8 @@ class DetalhesViagensViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
+    //MARK: - Métodos
+    
     func aumentarScroll(notification:Notification) {
         self.scrollPrincipal.contentSize = CGSize(width: self.scrollPrincipal.frame.width, height: self.scrollPrincipal.frame.height + 320)
     }
@@ -46,8 +54,12 @@ class DetalhesViagensViewController: UIViewController {
         self.textFieldData.text = formatador.string(from: sender.date)
     }
     
+    //MARK: - Ações
+    
     @IBAction func botaoVoltar(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
+        if let navigation = navigationController {
+            navigation.popViewController(animated: true)
+        }
     }
     
     @IBAction func textFieldEntrouFoco(_ sender: UITextField) {

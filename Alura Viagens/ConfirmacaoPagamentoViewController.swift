@@ -9,6 +9,8 @@
 import UIKit
 
 class ConfirmacaoPagamentoViewController: UIViewController {
+    
+    //MARK: - Outlets
 
     @IBOutlet weak var imagemPacoteViagem: UIImageView!
     @IBOutlet weak var labelHotelPacoteViagem: UILabel!
@@ -18,7 +20,11 @@ class ConfirmacaoPagamentoViewController: UIViewController {
     @IBOutlet weak var labelDescricaoPacoteViagem: UILabel!
     @IBOutlet weak var botaoVoltarHome: UIButton!
     
+    //MARK: - Atributos
+    
     var pacoteComprado:PacoteViagem? = nil
+    
+    //MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +45,8 @@ class ConfirmacaoPagamentoViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
+    //MARK: - Ações
 
     @IBAction func botaoVoltarHome(_ sender: UIButton) {
         if let navigation = self.navigationController {
