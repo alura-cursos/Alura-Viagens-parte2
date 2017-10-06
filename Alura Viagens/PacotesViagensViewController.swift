@@ -8,18 +8,24 @@
 
 import UIKit
 
-class PacotesViagensViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class PacotesViagensViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
 
     @IBOutlet weak var colecaoPacotesViagem: UICollectionView!
+    @IBOutlet weak var pesquisarViagens: UISearchBar!
     
-    let listaViagens:Array<Viagem> = ViagemDAO().retornaTodasAsViagens()
+    
+    @IBOutlet weak var labelContadorPacotes: UILabel!
+    let listaComTodasViagens:Array<Viagem> = ViagemDAO().retornaTodasAsViagens()
+    var listaViagens:Array<Viagem> = []
+    let listaPacotesViagens:Array<String> = ["Porto de galinhas", "Rio de Janeiro", "Cancun"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        listaViagens = listaComTodasViagens
         colecaoPacotesViagem.dataSource = self
         colecaoPacotesViagem.delegate = self
-
-        // Do any additional setup after loading the view.
+        pesquisarViagens.delegate = self
+        self.labelContadorPacotes.text = self.atualizaContadorLabel()
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,5 +58,20 @@ class PacotesViagensViewController: UIViewController, UICollectionViewDataSource
         let larguraCelula = collectionView.bounds.width / 2
         return CGSize(width: larguraCelula-15, height: 160)
     }
-
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        listaViagens = listaComTodasViagens
+        if searchText != "" {
+            let filtroListaViagem = NSPredicate(format: "titulo contains[c] %@", searchText)
+            let listaFiltrada:Array<Viagem> = (listaViagens as NSArray).filtered(using: filtroListaViagem) as! Array
+            listaViagens = listaFiltrada
+        }
+        self.labelContadorPacotes.text = self.atualizaContadorLabel()
+        colecaoPacotesViagem.reloadData()
+    }
+    
+    func atualizaContadorLabel() -> String {
+        return listaViagens.count == 1 ? "1 pacote encontrado" : "\(listaViagens.count) pacotes encontrados"
+    }
+    
 }
