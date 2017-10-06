@@ -8,28 +8,18 @@
 
 import UIKit
 
-class PacotesViagensViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UISearchBarDelegate {
-    
-    //MARK: - Outlets
+class PacotesViagensViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var colecaoPacotesViagem: UICollectionView!
-    @IBOutlet weak var pesquisarViagens: UISearchBar!
-    @IBOutlet weak var labelContadorPacotes: UILabel!
     
-    //MARK: - Atributos
-    
-    let listaComTodasViagens:Array<PacoteViagem> = PacoteViagemDAO().retornaTodasAsViagens()
-    var listaViagens:Array<PacoteViagem> = []
-    
-    //MARK: - View Life Cycle
+    let listaViagens:Array<Viagem> = ViagemDAO().retornaTodasAsViagens()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        listaViagens = listaComTodasViagens
         colecaoPacotesViagem.dataSource = self
         colecaoPacotesViagem.delegate = self
-        pesquisarViagens.delegate = self
-        self.labelContadorPacotes.text = self.atualizaContadorLabel()
+
+        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
@@ -37,47 +27,30 @@ class PacotesViagensViewController: UIViewController, UICollectionViewDataSource
         // Dispose of any resources that can be recreated.
     }
     
-    //MARK: - CollectionView
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.listaViagens.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let celulaPacote = collectionView.dequeueReusableCell(withReuseIdentifier: "celulaPacote", for: indexPath) as! PacoteViagemCollectionViewCell
-        let pacoteAtual = listaViagens[indexPath.item]
-        celulaPacote.configuraCelula(pacoteViagem: pacoteAtual)
+        
+        let viagemAtual = listaViagens[indexPath.item]
+        
+        celulaPacote.labelTitulo.text = viagemAtual.titulo
+        celulaPacote.labelQuantidadeDias.text = "\(viagemAtual.quantidadeDeDias) dias"
+        celulaPacote.labelPreco.text = "R$ \(viagemAtual.preco)"
+        celulaPacote.imagemViagem.image = UIImage(named: viagemAtual.caminhoDaImagem)
+        
+        celulaPacote.layer.borderWidth = 0.5
+        celulaPacote.layer.borderColor = UIColor(red: 85.0/255.0, green: 85.0/255.0, blue: 85.0/255.0, alpha: 1).cgColor
+        celulaPacote.layer.cornerRadius = 8
         
         return celulaPacote
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return UIDevice.current.userInterfaceIdiom == .phone ? CGSize(width: collectionView.bounds.width/2-20, height: 160) : CGSize(width: collectionView.bounds.width/3-20, height: 250)
+        let larguraCelula = collectionView.bounds.width / 2
+        return CGSize(width: larguraCelula-15, height: 160)
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let pacote = listaViagens[indexPath.item]
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "detalhes") as! DetalhesViagensViewController
-        controller.pacoteSelecionado = pacote
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
-    //MARK: - Métodos
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        listaViagens = listaComTodasViagens
-        if searchText != "" {
-            let filtroListaViagem = NSPredicate(format: "viagem.titulo contains %@", searchText)
-            let listaFiltrada:Array<PacoteViagem> = (listaViagens as NSArray).filtered(using: filtroListaViagem) as! Array
-            listaViagens = listaFiltrada
-        }
-        self.labelContadorPacotes.text = self.atualizaContadorLabel()
-        colecaoPacotesViagem.reloadData()
-    }
-    
-    func atualizaContadorLabel() -> String {
-        return listaViagens.count == 1 ? "1 pacote encontrado" : "\(listaViagens.count) pacotes encontrados"
-    }
-    
+
 }
